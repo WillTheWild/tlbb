@@ -1,8 +1,8 @@
-// stdafx.cpp : 只包括标准包含文件的源文件
-// WX_Billing.pch 将作为预编译头
-// stdafx.obj 将包含预编译类型信息
+// stdafx.cpp : Source file that includes only standard include files
+// WX_Billing.pch will be the precompiled header
+// stdafx.obj will contain the precompiled type information
 
 #include "stdafx.h"
 
-// TODO: 在 STDAFX.H 中
-// 引用任何所需的附加头文件，而不是在此文件中引用
+// TODO: In STDAFX.H
+// Reference any additional headers you need in STDAFX.H, not in this file
