@@ -1,13 +1,13 @@
-// stdafx.h : 标准系统包含文件的包含文件，
-// 或是经常使用但不常更改的
-// 特定于项目的包含文件
+// stdafx.h : Standard system include files header file
+// These are the files that are frequently used but not often changed
+// Specific include files for different projects
 //
 
 #pragma once
 
 
 #ifdef __WINDOWS__
-#define WIN32_LEAN_AND_MEAN		// 从 Windows 头中排除极少使用的资料
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #define _USE_32BIT_TIME_T
 #include <tchar.h>
 #endif
