@@ -39,9 +39,9 @@
 #include "PlayerShopPool.h"
 
 
-extern INT					g_Command_CommandDeny ;//¿ØÖÆ²ÎÊı£¬½ûÖ¹Ê¹ÓÃGMÖ¸Áî
-extern INT					g_Command_AlwaysLoadScript ;//Ã¿´ÎÖ´ĞĞ½Å±¾¶¼ÖØĞÂLoad
-extern INT					g_Command_AlwaysLoadMonsterIni ;//Ã¿´Î¶¼¶ÁÈ¡monster.iniÎÄ¼ş
+extern INT					g_Command_CommandDeny ;// Control parameter, prohibit the use of GM commands
+extern INT					g_Command_AlwaysLoadScript ;// Reload the script each time it is executed
+extern INT					g_Command_AlwaysLoadMonsterIni ;// Read the monster.ini file each time
 extern SMUPool<HumanSMU>	g_HumanSMUPool;
 
 Server						g_Server;
@@ -88,17 +88,17 @@ __ENTER_FUNCTION
 
 	BOOL ret ;
 
-	//³õÊ¼»¯ÅäÖÃÎÄ¼şÄ£¿é
+	// Initialize the configuration file module
 	ret = g_Server.InitConfig();
 	Assert(ret) ;
 
-//Ê±¼äÄ£¿éĞèÒª×î¿ªÊ¼µÄÊ±ºòÉèÖÃ
+// The time module needs to be set at the beginning
 	g_pTimeManager = new TimeManager ;
 	Assert( g_pTimeManager ) ;
 	ret = g_pTimeManager->Init( ) ;
 	Assert(ret) ;
 
-//ÈÕÖ¾Ä£¿é³õÊ¼»¯ĞèÒª×î¿ªÊ¼ÉèÖÃ
+// The log module initialization needs to be set at the beginning
 	g_pLog = new Log ;
 	Assert( g_pLog ) ;
 	ret = g_pLog->Init( ) ;
@@ -147,9 +147,9 @@ FULLUSERDATA=%d",
 		sizeof(FULLUSERDATA)
 		) ;
 	if( sizeof(FULLUSERDATA)!=36513)//34977)//34081)//35325)//34013)
-//		                           ^¼¼ÄÜ½á¹¹ ^¼¼ÄÜÊı
+//		                           ^æŠ€èƒ½ç»“æ„ ^æŠ€èƒ½æ•° (^ Skill structure ^ Number of skills)
 	{
-		AssertEx(FALSE,"ÓÃ»§µµ°¸Êı¾İ³ß´ç·¢Éú±ä»¯£¬ÇëÁªÏµÏà¹ØÈËÔ±ËµÃ÷Ïà¹ØÇé¿ö£¡") ;
+		AssertEx(FALSE,"The size of the user profile data has changed, please contact the relevant personnel for an explanation!") ;
 	}
 	
 
@@ -225,13 +225,13 @@ __ENTER_FUNCTION
 	//Assert( ret ) ;
 
 
-//·ÖÅäÄÚ´æ
+//Allocate memory
 	ret = NewStaticServer( ) ;
 	Assert( ret ) ;
 
 
 
-//³õÊ¼»¯¸÷¸öÄ£¿é
+//Initialize various modules
 	ret = InitStaticServer( ) ;
 	Assert( ret ) ;
 
@@ -257,7 +257,7 @@ __ENTER_FUNCTION
 
 	MySleep( 1500 ) ;
 
-	//Ö÷Ïß³Ìµ÷¶È×ÊÔ´·Ö¸øClientManagerÀ´Ö´ĞĞ£»
+	//The main thread dispatches resources to be executed by ClientManager;
 	Log::SaveLog( SERVER_LOGFILE, "g_pClientManager->Loop( )..." ) ;
 	g_pClientManager->start( ) ;
 
@@ -279,20 +279,20 @@ __ENTER_FUNCTION
 
 
 	//////////////////
-	//µÈ´ıËùÓĞÏß³ÌÍêÈ«ÍÆ³öºóÖ´ĞĞÇå³ı²Ù×÷
+	//Wait for all threads to completely exit before performing the cleanup
 	WaitForAllThreadQuit( ) ;
 
 
 
 	Log::SaveLog( SERVER_LOGFILE, "Begin delete..." ) ;
-	//¶¯Ì¬Êı¾İ
+	//Dynamic data
 	SAFE_DELETE( g_pClientManager ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pClientManager delete...OK" ) ;
 	SAFE_DELETE( g_pThreadManager ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pThreadManager delete...OK" ) ;
 
 
-	//¾²Ì¬Êı¾İ
+	//Static data
 	SAFE_DELETE( g_pSceneManager ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pSceneManager delete...OK" ) ;
 	SAFE_DELETE( g_pPlayerPool ) ;
@@ -385,7 +385,7 @@ __ENTER_FUNCTION
 #define MAX_WAIT_QUIT 300
 
 	INT iQuit ;
-	//×î³¤Ê±¼ä¿ÉÒÔµÈ´ıMAX_WAIT_QUITÃë
+	//æœ€é•¿æ—¶é—´å¯ä»¥ç­‰å¾…MAX_WAIT_QUITç§’
 	for( INT i=0;i<MAX_WAIT_QUIT;i++ )
 	{
 		iQuit = g_QuitThreadCount ;
@@ -452,7 +452,7 @@ __ENTER_FUNCTION
 	Assert( g_pGUIDManager ) ;
 	Log::SaveLog( SERVER_LOGFILE, "new GUIDManager...OK" ) ;
 
-	//new Íæ¼ÒÉÌµê³Ø
+	//new Player Shop Pool
 	g_pPlayerShopPool	=	new PlayerShopPool;
 	Assert(g_pPlayerShopPool);
 	Log::SaveLog( SERVER_LOGFILE, "new g_pPlayerShopPool...OK" ) ;
@@ -500,7 +500,7 @@ __ENTER_FUNCTION
 	//Assert(g_pDynamicSceneManager);
 	//Log::SaveLog( SERVER_LOGFILE, "new DynamicSceneManager...OK" ) ;
 
-	//ÎïÆ·¹ÜÀíÆ÷
+	//Item Manager
 	g_pItemManager = new ItemManager;
 	Assert(g_pItemManager);
 	Log::SaveLog( SERVER_LOGFILE, "new ItemManager...OK" ) ;
@@ -509,20 +509,20 @@ __ENTER_FUNCTION
 	Assert(g_pDaemonThread);
 	Log::SaveLog( SERVER_LOGFILE, "new DaemonThread...OK" ) ;
 
-	// ËÀÍö³Í·£Êı¾İ
+	// Death penalty data
 	g_pDiePenaltyManager = new DiePenaltyManager;
 	Assert(g_pDiePenaltyManager);
 	Log::SaveLog( SERVER_LOGFILE, "new DiePenaltyManager...OK" ) ;
 
-	// Êı¾İ¼à¿Ø¹ÜÀíÆ÷
+	// Data monitoring manager
 	g_pPerformanceManager = new PerformanceManager;
 	Assert(g_pPerformanceManager);
 	Log::SaveLog( SERVER_LOGFILE, "new PerformanceManager...OK" ) ;
 
 
-	//***×¢Òâ***
+	//***Note***
 	//
-	//  ÒÔÏÂÁ½¸öÄ£¿é·ÅÔÚ×îºóÉú³É
+	//  The following two modules are generated last
 	//
 	g_pThreadManager = new ThreadManager ;
 	Assert( g_pThreadManager ) ;
@@ -580,40 +580,40 @@ __ENTER_FUNCTION
 	{
 		nTemp = MAX_POOL_SIZE;
 	}
-//ShareMemory ×îÏÈ
+//ShareMemory first
 	
 	const _SERVER_DATA*	pCurrentSData =	g_pServerManager->GetCurrentServerInfo();
 	
 	if(pCurrentSData->m_EnableShareMem)
 	{
 		ret = g_HumanSMUPool.Init(/*g_pPlayerPool->GetPlayerPoolMaxCount()*//*________________*/nTemp,pCurrentSData->m_HumanSMKey,SMPT_SERVER);
-		AssertEx(ret,"¹²ÏíÄÚ´æ³õÊ¼»¯´íÎó,ÇëÏÈÆô¶¯ShareMemory");
+		AssertEx(ret,"Share memory initialization error, please start ShareMemory first");
 
 		if(g_HumanSMUPool.GetHeadVer()!=0)
 		{
-			AssertEx(ret,"ShareMemory ´æÅÌÉĞÎ´Íê³É£¬ÇëÉÔºóÆô¶¯Server");
+			AssertEx(ret,"ShareMemory save is not completed, please start the Server later");
 		}
 
 		ret = g_PlayerShopSMUPool.Init(MAX_PLAYER_SHOP_POOL_PER_SERVER,pCurrentSData->m_PlayShopSMKey,SMPT_SERVER);
-		AssertEx(ret,"¹²ÏíÄÚ´æ³õÊ¼»¯´íÎó,ÇëÏÈÆô¶¯ShareMemory");
+		AssertEx(ret,"Share memory initialization error, please start ShareMemory first");
 
 		if(g_PlayerShopSMUPool.GetHeadVer()!=0)
 		{
-			AssertEx(ret,"ShareMemory ´æÅÌÉĞÎ´Íê³É£¬ÇëÉÔºóÆô¶¯Server");
+			AssertEx(ret,"ShareMemory save is not completed, please start the Server later");
 		}
 
 		ret = g_ItemSerialSMUPool.Init(1,pCurrentSData->m_ItemSerialKey,SMPT_SERVER);
-		AssertEx(ret,"¹²ÏíÄÚ´æ³õÊ¼»¯´íÎó,ÇëÏÈÆô¶¯ShareMemory");
+		AssertEx(ret,"Share memory initialization error, please start ShareMemory first");
 
 		if(g_ItemSerialSMUPool.GetHeadVer()!=0)
 		{
-			AssertEx(ret,"ShareMemory ´æÅÌÉĞÎ´Íê³É£¬ÇëÉÔºóÆô¶¯Server");
+			AssertEx(ret,"ShareMemory save is not completed, please start the Server later");
 		}
 
 
 	}
 
-//ÏÈ±í¸ñÊı¾İ
+//Table data first
 	//
 	ret = g_ItemTable.Init();
 	Assert(ret);
@@ -626,7 +626,7 @@ __ENTER_FUNCTION
 
 
 
-//ºóÂß¼­Ä£¿éÊı¾İ
+//Logical module data later
 	//________________________________________________________
 	if( g_Config.m_ConfigInfo.m_SystemModel == 0 )
 	{
@@ -686,7 +686,7 @@ __ENTER_FUNCTION
 	Assert( ret );
 	Log::SaveLog( SERVER_LOGFILE, "g_pGUIDManager->Init()...OK" ) ;
 	
-	//ÎïÆ·ºĞ³õÊ¼»¯
+	//Item box initialization
 	//________________________________________________________
 	if( g_Config.m_ConfigInfo.m_SystemModel == 0 )
 	{
@@ -700,7 +700,7 @@ __ENTER_FUNCTION
 	Assert(ret);
 	Log::SaveLog( SERVER_LOGFILE, "g_pItemBoxPool->Init()...OK" ) ;
 
-	//Íæ¼ÒÉÌµê³Ø³õÊ¼»¯
+	//Player shop pool initialization
 	//________________________________________________________
 	if( g_Config.m_ConfigInfo.m_SystemModel == 0 )
 	{
@@ -744,7 +744,7 @@ __ENTER_FUNCTION
 	Assert( ret ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pCopySceneManager->Init()...OK" ) ;
 
-	//Íæ¼Ò×Ô½¨³ÇÊĞµÈ___________________________
+	//Player self-built cities, etc.___________________________
 	//ret = g_pDynamicSceneManager->Init();
 	//Assert( ret ) ;
 	//Log::SaveLog( SERVER_LOGFILE, "g_pDynamicSceneManager->Init()...OK" ) ;
@@ -774,35 +774,35 @@ __ENTER_FUNCTION
 	Assert(ret);
 	Log::SaveLog( SERVER_LOGFILE, "g_pItemManager->Init()...OK" ) ;
 
-	//ËÀÍö³Í·£
+	// Death penalty
 	ret = g_pDiePenaltyManager->Init( 1024 );
 	Assert( ret ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pDiePenaltyManager->Init()...OK" ) ;
 
-	//Æ½Ì¨¹ÜÀí¹¤¾ß£¬±£´æºÍÍ³¼ÆÏµÍ³ÖĞ¸÷¸öÄ£¿éÖ´ĞĞĞ§ÂÊ¼°ÔËĞĞÇé¿ö
+	// Platform management tool, save and statistics of the efficiency and operation of each module in the system
 	ret = g_pPerformanceManager->Init( );
 	Assert( ret ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pPerformanceManager->Init()...OK" ) ;
 
 	/************************************************************************/
 	/*
-	¸÷¸ö¹ÜÀíÆ÷,³ØÖ®¼äÏà¹ØÊı¾İµÄÁ¬½Ó,ÓĞĞ©Êı¾İÊÇ´ÓsharememÖĞµ¹Èëµ½³ØÖĞµÄ£¬
-	ĞèÒª¸ù¾İÕâĞ©Êı¾İµÄÊôĞÔÁ¬½Óµ½Ö¸¶¨µÄ¹ÜÀíÆ÷
+	Managers and pools connect related data.
+ Some data is imported from sharemem into the pool, and these data need to be connected to the specified manager according to their attributes
     */
 	/************************************************************************/
 	ret = g_pPlayerShopPool->ConnectTo(g_pSceneManager);
 	Assert( ret );
 	Log::SaveLog( SERVER_LOGFILE, "g_pPlayerShopPool->ConnectTo(g_pSceneManager)...OK" ) ;
 
-	//***×¢Òâ***
+	//***Note***
 	//
-	//·ÅÔÚ×îºó³õÊ¼»¯µÄÊÇÏß³ÌÊı¾İ
+	//The last initialization is thread data
 	//
 	ret = g_pServerManager->Init( ) ;
 	Assert( ret ) ;
 	Log::SaveLog( SERVER_LOGFILE, "g_pServerManager->Init()...OK" ) ;
 
-	//¸ù¾İÅäÖÃÎÄ¼ş¶ÁÈ¡ĞèÒªÊ¹ÓÃµÄ³¡¾°£¬ÎªÃ¿¸ö³¡¾°·ÖÅäÒ»¸öÏß³Ì£»
+	// Read the scenes that need to be used according to the configuration file, and allocate a thread for each scene;
 	if( g_Config.m_ConfigInfo.m_SystemModel == 0 )
 	{
 		nTemp = 10;
