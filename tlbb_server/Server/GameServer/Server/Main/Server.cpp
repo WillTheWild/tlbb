@@ -385,7 +385,7 @@ __ENTER_FUNCTION
 #define MAX_WAIT_QUIT 300
 
 	INT iQuit ;
-	//最长时间可以等待MAX_WAIT_QUIT秒
+	// Maximum waiting time is MAX_WAIT_QUIT seconds
 	for( INT i=0;i<MAX_WAIT_QUIT;i++ )
 	{
 		iQuit = g_QuitThreadCount ;
