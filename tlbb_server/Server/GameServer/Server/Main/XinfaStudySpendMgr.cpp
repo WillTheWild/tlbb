@@ -19,7 +19,7 @@ __ENTER_FUNCTION
 __LEAVE_FUNCTION
 }
 
-// 从文件".\PUBLIC\Config\XinFaStudySpend_V1.txt"中读取数据
+// Read data from the file ".\PUBLIC\Config\XinFaStudySpend_V1.txt"
 BOOL XinfaStudySpendMgr::Init()
 {
 __ENTER_FUNCTION
