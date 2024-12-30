@@ -7,8 +7,8 @@
 
 
 
-//游戏入口模块
-//所有子模块都是通过此模块来初始化和执行
+// Game Entry Module
+// All submodules are initialized and executed through this module
 
 class Server
 {
@@ -16,29 +16,29 @@ public :
 	Server( ) ;
 	~Server( ) ;
 
-	//初始化配置
+	// Initialize configuration
 	//___________________________________
 	BOOL	InitConfig();
 
-	//初始化
+	// Initialization
 	BOOL	InitServer( ) ;
-	//主循环，此主循环最终会交给ClientManager模块来使用其执行资源
+	// The main loop, this main loop will eventually be handed over to the ClientManager module to execute its resources.
 	BOOL	Loop( ) ;
-	//退出
+	// Exit
 	BOOL	ExitServer( ) ;
 
-	//分配数据
-	//为每个模块分配内存
+	// Allocate Data
+	// Allocate memory for each module.
 	BOOL	NewStaticServer( ) ;
-	//初始化各个模块
+	// Initialize each module.
 	BOOL	InitStaticServer( ) ;
 
-	//停止模块执行，当调用此接口后，会将所有拥有线程的模块设置为不活动状态
-	//当各个线程的循环调用下一此循环操作后就会退出
+	// Stop module execution. After calling this interface, all modules with threads will be set to an inactive state.  
+	// Once each thread completes its next iteration of the loop operation, it will exit.  
 	VOID	Stop( ) ;
 
-	//等待所有其他线程都退出后此函数才返回
-	//此函数是一个阻塞函数，如果有其他线程没有退出，此函数会一直挂起
+	// This function will only return after all other threads have exited.  
+	// It is a blocking function, and if any threads have not exited, this function will remain suspended.  
 	VOID	WaitForAllThreadQuit( ) ;
 
 
